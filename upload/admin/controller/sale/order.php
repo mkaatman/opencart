@@ -171,7 +171,7 @@ class ControllerSaleOrder extends Controller {
 				'shipping_code' => $result['shipping_code'],
 				'view'          => $this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'] . $url, true),
 				'edit'          => $this->url->link('sale/order/edit', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'] . $url, true),
-				'view_orders'       => $this->url->link('sale/order/product', 'token=' . $this->session->data['token'] . '&product_id=' . $result['product_id'] . $url, 'SSL')
+				'view_orders'       => $this->url->link('sale/order/product', 'token=' . $this->session->data['token'] . '&product_id=' . $result['product_id'] . $url, true)
 			);
 		}
 
