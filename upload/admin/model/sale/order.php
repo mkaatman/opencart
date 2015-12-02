@@ -1,5 +1,22 @@
 <?php
 class ModelSaleOrder extends Model {
+    public function getOrdersByProduct($product_id) {
+        $sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, o.customer_id, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS status, o.shipping_code, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified, 
+        oop.quantity, oop.order_product_id, oop.product_id
+        FROM `" . DB_PREFIX . "order` o
+        LEFT JOIN oc_order_product oop on oop.order_id = o.order_id
+        LEFT JOIN oc_product op on op.product_id = oop.product_id
+         WHERE o.order_status_id IN (1,2,3,5,15)
+         AND oop.product_id = $product_id
+        ";
+        
+        $order_query = $this->db->query($sql);
+        
+        return $order_query->rows;
+                
+    }
+    
+    
 	public function getOrder($order_id) {
 		$order_query = $this->db->query("SELECT *, (SELECT CONCAT(c.firstname, ' ', c.lastname) FROM " . DB_PREFIX . "customer c WHERE c.customer_id = o.customer_id) AS customer FROM `" . DB_PREFIX . "order` o WHERE o.order_id = '" . (int)$order_id . "'");
 

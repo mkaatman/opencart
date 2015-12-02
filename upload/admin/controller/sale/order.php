@@ -171,6 +171,7 @@ class ControllerSaleOrder extends Controller {
 				'shipping_code' => $result['shipping_code'],
 				'view'          => $this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'] . $url, true),
 				'edit'          => $this->url->link('sale/order/edit', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'] . $url, true),
+				'view_orders'       => $this->url->link('sale/order/product', 'token=' . $this->session->data['token'] . '&product_id=' . $result['product_id'] . $url, 'SSL')
 			);
 		}
 
@@ -1955,5 +1956,67 @@ class ControllerSaleOrder extends Controller {
 		}
 
 		$this->response->setOutput($this->load->view('sale/order_shipping', $data));
+	}
+	
+    public function product() {
+        $this->load->language('sale/order');
+        $this->document->setTitle($this->language->get('heading_title'));
+
+        $data['heading_title'] = $this->language->get('heading_title');
+		$data['breadcrumbs'] = array();
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_home'),
+			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL')
+		);
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('heading_title'),
+			'href' => $this->url->link('sale/order', 'token=' . $this->session->data['token'] . $url, 'SSL')
+		);
+		
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('Product'),
+			'href' => $this->url->link('sale/order/product', ' token=' . $this->session->data['token']."&product_id=".$this->request->get['product_id'] . $url, 'SSL')
+		);
+        
+		$this->document->setTitle($this->language->get('heading_title'));
+
+		$this->load->model('sale/order');
+		$this->load->model('catalog/product');
+		$data['product'] = $this->model_catalog_product->getProduct($this->request->get['product_id']);
+		//var_dump($data['product']);
+		$data['orders'] = $this->model_sale_order->getOrdersByProduct($this->request->get['product_id']);
+		
+        $data['header'] = $this->load->controller('common/header');
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['token'] = $this->session->data['token'];
+		
+		$orderBreakdown = array();
+		
+		foreach($data['orders'] as $k => $order) {
+		    //$orderBreakdown[$order['order_id']] = array();
+		    $options = $this->model_sale_order->getOrderOptions($order['order_id'], $order['order_product_id']);
+		    $data['ordersBreakdown'][$order['order_id']]['order'] = $order;
+		    $data['ordersBreakdown'][$order['order_id']]['view'] = $this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . '&order_id=' . $order['order_id'] . $url, true);
+		    $data['ordersBreakdown'][$order['order_id']]['customer'] = $this->url->link('customer/customer/edit', 'token=' . $this->session->data['token'] . '&customer_id=' . $order['customer_id'] . $url, true);
+		    foreach ($options as $option) {
+		        
+		        $data['ordersBreakdown'][$order['order_id']]['breakdown'][]= array(
+							'name'  => $option['name'],
+							'value' => $option['value'],
+							'type'  => $option['type'],
+							'quantity' => $order['quantity']);
+		    }
+		    //$data['orderBreakdown'] = $orderBreakdown;
+		}
+		
+
+		//echo "<pre>";
+		//var_dump($data['ordersBreakdown']);
+		//echo "</pre>";
+
+		$this->response->setOutput($this->load->view('sale/order_info_by_product', $data));
 	}
 }

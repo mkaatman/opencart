@@ -51,3 +51,4 @@
 
 # IDE Project files
 /.idea
+*.bak

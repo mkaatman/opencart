@@ -138,7 +138,7 @@
                     <span class="label label-success"><?php echo $product['quantity']; ?></span>
                     <?php } ?></td>
                   <td class="text-left"><?php echo $product['status']; ?></td>
-                  <td class="text-right"><a href="<?php echo $product['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+                  <td class="text-right"><a href="<?php echo $product['view_orders']; ?>"  data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info"><i class="fa fa-shopping-cart fa-fw"></i></a> <a href="<?php echo $product['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
                 </tr>
                 <?php } ?>
                 <?php } else { ?>
